@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оставить отзыв ✨</title>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      line-height: 1.6;
+      padding: 40px 20px;
+      margin: 0;
+      background-color: #fff0f5;
+      color: #555;
+      display: flex;
+      justify-content: center;
+    }
+
+    .profile-card {
+      background: white;
+      padding: 30px;
+      border-radius: 25px;
+      border: 2px solid #ffc0cb;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      max-width: 500px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h1, h2 {
+      color: #d87093;
+      font-family: 'Georgia', serif;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 15px;
+      border: 1px solid #ffc0cb;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    textarea {
+      height: 100px;
+      resize: none;
+    }
+
+    .error-text {
+      color: #d87093;
+      font-size: 12px;
+      display: block;
+      margin-top: 5px;
+    }
+
+    button {
+      background-color: #ffb6c1;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #ff69b4;
+    }
+
+    .comment-item {
+      border-bottom: 1px dashed #ffc0cb;
+      padding: 15px 0;
+    }
+
+    .comment-name {
+      color: #d87093;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const App = () => {
+      const [formData, setFormData] = useState({ name: '', email: '', comment: '' });
+      const [errors, setErrors] = useState({});
+      const [comments, setComments] = useState([]);
+
+      const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const newErrors = {};
+
+
+        if (!formData.name.trim()) {
+          newErrors.name = 'Имя не должно быть пустым 🎀';
+        }
+
+        if (!formData.email.trim()) {
+          newErrors.email = 'Email не должен быть пустым 🎀';
+        } else if (!formData.email.includes('@')) {
+          newErrors.email = 'Email должен содержать символ @ 🎀';
+        }
+
+        if (formData.comment.trim().length < 5) {
+          newErrors.comment = 'Комментарий должен содержать минимум 5 символов 🎀';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+          setErrors(newErrors);
+        } else {
+
+          setComments(prev => [...prev, { ...formData, id: Date.now() }]);
+          setFormData({ name: '', email: '', comment: '' });
+          setErrors({});
+        }
+      };
+
+      return (
+        <div className="profile-card">
+          <h1>Оставить отзыв ✨</h1>
+
+          <form onSubmit={handleSubmit} noValidate>
+
+            <div className="form-group">
+              <label htmlFor="name">Имя</label>
+              <input id="name" type="text" value={formData.name} onChange={handleChange} />
+              {errors.name && <span className="error-text">{errors.name}</span>}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input id="email" type="email" value={formData.email} onChange={handleChange} />
+              {errors.email && <span className="error-text">{errors.email}</span>}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="comment">Комментарий</label>
+              <textarea id="comment" value={formData.comment} onChange={handleChange} />
+              {errors.comment && <span className="error-text">{errors.comment}</span>}
+            </div>
+
+            <button type="submit">Отправить 💖</button>
+          </form>
+
+
+          {comments.length > 0 && (
+            <div style={{ marginTop: '30px' }}>
+              <h2>Комментарии</h2>
+              {comments.map(c => (
+                <div key={c.id} className="comment-item">
+                  <span className="comment-name">{c.name}</span>
+                  <small style={{ color: '#aaa', marginLeft: '10px' }}>({c.email})</small>
+                  <p style={{ margin: '5px 0 0 0' }}>{c.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+
+</body>
+</html>
